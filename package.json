@@ -1,0 +1,30 @@
+{
+  "name": "accessfix",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run dev --workspace=@accessfix/backend",
+    "dev:frontend": "npm run dev --workspace=@accessfix/frontend",
+    "build": "npm run build --workspaces",
+    "build:shared": "npm run build --workspace=@accessfix/shared",
+    "build:backend": "npm run build --workspace=@accessfix/backend",
+    "build:frontend": "npm run build --workspace=@accessfix/frontend",
+    "test": "npm run test --workspaces",
+    "setup": "npm install && npm run build:shared"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.11.24",
+    "concurrently": "^8.2.2",
+    "micromatch": "^4.0.8",
+    "readdirp": "^4.0.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "diff": "^9.0.0"
+  }
+}

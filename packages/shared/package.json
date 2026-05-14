@@ -1,0 +1,14 @@
+{
+  "name": "@accessfix/shared",
+  "version": "1.0.0",
+  "description": "Shared types, schemas, and interfaces for AccessFix",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

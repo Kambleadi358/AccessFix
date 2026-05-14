@@ -1,0 +1,39 @@
+{
+  "extends": "../../tsconfig.json",
+
+  "compilerOptions": {
+    "target": "ES2022",
+
+    "module": "Node16",
+    "moduleResolution": "Node16",
+
+    "outDir": "./dist",
+    "rootDir": "../",
+
+    "baseUrl": ".",
+
+    "strict": true,
+
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    "types": [
+      "node",
+      "jest"
+    ],
+
+    "paths": {
+      "@accessfix/shared": ["../shared/src"]
+    }
+  },
+
+  "include": [
+    "src/**/*",
+    "../shared/src/**/*"
+  ],
+
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
