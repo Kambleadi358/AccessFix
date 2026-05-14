@@ -1,13 +1,16 @@
-import { AIFixSuggestion } from '@accessfix/shared';
-import { Sparkles, Code2, ChevronDown, ChevronUp, CheckCircle2, AlertTriangle, Wand2 } from 'lucide-react';
+import { AIFixSuggestion, Violation } from '@accessfix/shared';
+import { Sparkles, Code2, ChevronDown, ChevronUp, CheckCircle2, AlertTriangle, Wand2, Eye } from 'lucide-react';
 import { useState } from 'react';
+import { RemediationPreview } from './RemediationPreview';
 
 interface Props {
   suggestions: AIFixSuggestion[];
+  violations: Violation[];
 }
 
-export function AISuggestionsPanel({ suggestions }: Props) {
+export function AISuggestionsPanel({ suggestions, violations }: Props) {
   const [expanded, setExpanded] = useState<number | null>(0);
+  const [previewItem, setPreviewItem] = useState<{ v: Violation, s: AIFixSuggestion } | null>(null);
 
   if (suggestions.length === 0) {
     return (
@@ -102,12 +105,33 @@ export function AISuggestionsPanel({ suggestions }: Props) {
                       </div>
                     </div>
                   </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      onClick={() => {
+                        const violation = violations.find(v => v.ruleId === s.ruleId);
+                        if (violation) setPreviewItem({ v: violation, s });
+                      }}
+                      className="btn-primary text-[10px] h-8 px-4 flex items-center gap-2 bg-purple-600 hover:bg-purple-700 border-none"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      Visual Preview Fix
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           );
         })}
       </div>
+
+      {previewItem && (
+        <RemediationPreview 
+          violation={previewItem.v} 
+          suggestion={previewItem.s} 
+          onClose={() => setPreviewItem(null)} 
+        />
+      )}
     </div>
   );
 }

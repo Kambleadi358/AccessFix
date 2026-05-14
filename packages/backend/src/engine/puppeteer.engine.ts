@@ -121,7 +121,7 @@ export class PuppeteerEngine {
 
         const buffer = await page.screenshot({
           type: 'png',
-          fullPage: false,
+          fullPage: true,
         });
 
         screenshotBase64 = buffer.toString('base64');

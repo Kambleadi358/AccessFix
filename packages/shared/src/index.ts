@@ -91,6 +91,10 @@ export interface AccessibilityScore {
     total: number;
   };
 
+  passedChecks: number;
+
+  failedChecks: number;
+
   grade: 'A' | 'B' | 'C' | 'D' | 'F';
 
   passRate: number;
@@ -248,6 +252,10 @@ export interface DbScan {
   major_count: number;
 
   minor_count: number;
+
+  passed_checks: number;
+
+  failed_checks: number;
 
   status: string;
 

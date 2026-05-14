@@ -14,11 +14,15 @@ export class ScanRepository {
     const insertScan = db.prepare(`
       INSERT INTO scans (
         id, url, scanned_at, duration_ms, overall_score, grade, pass_rate,
-        critical_count, major_count, minor_count, status, error,
+        critical_count, major_count, minor_count, 
+        passed_checks, failed_checks,
+        status, error,
         screenshot_path, page_title, page_language, raw_result
       ) VALUES (
         @id, @url, @scanned_at, @duration_ms, @overall_score, @grade, @pass_rate,
-        @critical_count, @major_count, @minor_count, @status, @error,
+        @critical_count, @major_count, @minor_count, 
+        @passed_checks, @failed_checks,
+        @status, @error,
         @screenshot_path, @page_title, @page_language, @raw_result
       )
     `);
@@ -56,6 +60,8 @@ export class ScanRepository {
         critical_count: result.score.violationCounts.critical,
         major_count: result.score.violationCounts.major,
         minor_count: result.score.violationCounts.minor,
+        passed_checks: result.score.passedChecks,
+        failed_checks: result.score.failedChecks,
         status: result.status,
         error: result.error || null,
         screenshot_path: result.screenshotPath || null,

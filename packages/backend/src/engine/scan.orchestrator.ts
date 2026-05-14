@@ -58,7 +58,7 @@ export class ScanOrchestrator {
       });
 
       // ── Step 4: Calculate score ─────────────────────────
-      const score = scoringEngine.calculate(violations);
+      const score = scoringEngine.calculate(violations, ruleEngine.getRuleMetadata().length);
 
       // ── Step 5: AI suggestions (pass HTML context for better fixes) ──
       let aiSuggestions: AIFixSuggestion[] = [];

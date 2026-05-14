@@ -15,8 +15,8 @@ function getScoreColor(score: number): { ring: string; text: string } {
 
 export function ScoreRing({ score, size = 'md' }: Props) {
   const { ring, text } = getScoreColor(score.overall);
-  const dim = size === 'lg' ? 160 : size === 'md' ? 120 : 80;
-  const stroke = size === 'lg' ? 10 : size === 'md' ? 8 : 6;
+  const dim = size === 'lg' ? 140 : size === 'md' ? 100 : 70;
+  const stroke = size === 'lg' ? 8 : size === 'md' ? 6 : 4;
   const r = (dim - stroke * 2) / 2;
   const circumference = 2 * Math.PI * r;
   const offset = circumference - (score.overall / 100) * circumference;
@@ -26,12 +26,23 @@ export function ScoreRing({ score, size = 'md' }: Props) {
   const gradeSize = size === 'lg' ? 'text-sm' : 'text-xs';
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="relative" style={{ width: dim, height: dim }} aria-hidden="true">
-        <svg width={dim} height={dim} className="-rotate-90">
-          {/* Background ring */}
-          <circle cx={cx} cy={cx} r={r} fill="none" stroke="#f1f5f9" strokeWidth={stroke} />
-          {/* Score ring */}
+    <div className="flex flex-col items-center gap-2">
+      <div className="relative group" style={{ width: dim, height: dim }} aria-hidden="true">
+        {/* Subtle glow effect */}
+        <div 
+          className="absolute inset-0 rounded-full opacity-10 blur-xl transition-opacity group-hover:opacity-20"
+          style={{ backgroundColor: ring }}
+        />
+        
+        <svg width={dim} height={dim} className="-rotate-90 relative z-10">
+          {/* Background track */}
+          <circle 
+            cx={cx} cy={cx} r={r} 
+            fill="none" 
+            stroke="#f1f5f9" 
+            strokeWidth={stroke} 
+          />
+          {/* Active progress ring */}
           <circle
             cx={cx} cy={cx} r={r}
             fill="none"
@@ -40,20 +51,27 @@ export function ScoreRing({ score, size = 'md' }: Props) {
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
-            style={{ transition: 'stroke-dashoffset 1s ease-out' }}
+            className="transition-[stroke-dashoffset] duration-1000 ease-out"
           />
         </svg>
-        {/* Score text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className={`${fontSize} font-extrabold ${text}`}>{score.overall}</span>
-          <span className={`${gradeSize} text-slate-400 font-medium`}>/{100}</span>
+        
+        {/* Central score display */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
+          <span className={`${fontSize} font-black tracking-tighter`} style={{ color: ring }}>
+            {score.overall}
+          </span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest -mt-1">
+            Score
+          </span>
         </div>
       </div>
 
-      {/* Grade */}
-      <div className="text-center">
-        <div className={`text-2xl font-bold ${text}`}>Grade {score.grade}</div>
-        <div className="text-sm text-slate-500">{score.passRate}% rules passed</div>
+      {/* Grade and Pass Rate */}
+      <div className="text-center mt-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Compliance Grade</span>
+          <span className={`text-sm font-black ${text}`}>{score.grade}</span>
+        </div>
       </div>
     </div>
   );

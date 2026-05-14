@@ -45,6 +45,9 @@ export function initDatabase(): void {
       major_count INTEGER DEFAULT 0,
       minor_count INTEGER DEFAULT 0,
 
+      passed_checks INTEGER DEFAULT 0,
+      failed_checks INTEGER DEFAULT 0,
+
       status TEXT DEFAULT 'completed',
 
       error TEXT,
@@ -145,4 +148,15 @@ export function initDatabase(): void {
     CREATE INDEX IF NOT EXISTS idx_scans_scanned_at
     ON scans(scanned_at DESC);
   `);
+
+  // ─── Migrations for existing databases ─────────────
+  try {
+    database.exec('ALTER TABLE scans ADD COLUMN passed_checks INTEGER DEFAULT 0');
+    logger.info('Migration: Added passed_checks column to scans table');
+  } catch (e) {}
+  
+  try {
+    database.exec('ALTER TABLE scans ADD COLUMN failed_checks INTEGER DEFAULT 0');
+    logger.info('Migration: Added failed_checks column to scans table');
+  } catch (e) {}
 }

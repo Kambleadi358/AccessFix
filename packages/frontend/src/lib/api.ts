@@ -49,4 +49,16 @@ export const downloadReport = (scanId: string, format: 'json' | 'csv' | 'html') 
   window.open(`/api/reports/${scanId}/${format}`, '_blank');
 };
 
+export const downloadRemediationReport = (scanId: string, rules?: string[]) => {
+  const query = rules ? `?rules=${rules.join(',')}` : '';
+  window.open(`/api/reports/${scanId}/remediation${query}`, '_blank');
+};
+
+// ─── AI APIs ──────────────────────────────────────────────────
+
+export const generateBatchFixes = async (scanId: string, violations: any[]): Promise<any[]> => {
+  const res = await api.post('/ai/batch-fix', { scanId, violations });
+  return res.data.data;
+};
+
 export default api;

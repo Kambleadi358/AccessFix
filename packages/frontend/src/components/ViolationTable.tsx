@@ -4,6 +4,8 @@ import { useState, useMemo } from 'react';
 
 interface Props {
   violations: Violation[];
+  onGenerateFixes?: (selectedViolations: Violation[]) => void;
+  isGenerating?: boolean;
 }
 
 const severityConfig = {
@@ -89,13 +91,30 @@ export function ViolationTable({ violations: initialViolations }: Props) {
               </span>
             )}
             {selectedIds.size > 0 && (
-              <button
-                onClick={dismissSelected}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded text-xs font-bold hover:bg-red-700 shadow-sm transition-colors"
-              >
-                <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
-                Dismiss Selected ({selectedIds.size})
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const selected = initialViolations.filter((_, i) => selectedIds.has(i));
+                    onGenerateFixes?.(selected);
+                  }}
+                  disabled={isGenerating}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white rounded text-xs font-bold hover:bg-purple-700 shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isGenerating ? (
+                    <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Wrench className="w-3.5 h-3.5" aria-hidden="true" />
+                  )}
+                  Generate AI Fixes ({selectedIds.size})
+                </button>
+                <button
+                  onClick={dismissSelected}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded text-xs font-bold hover:bg-red-700 shadow-sm transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                  Dismiss ({selectedIds.size})
+                </button>
+              </div>
             )}
           </div>
         </div>

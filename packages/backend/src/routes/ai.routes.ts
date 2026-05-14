@@ -105,3 +105,51 @@ aiRouter.get(
     }
   }
 );
+
+// ─── POST /api/ai/batch-fix ──────────────────────────────────
+// Generate AI fixes for multiple violations
+aiRouter.post(
+  '/batch-fix',
+  [
+    body('violations').isArray().withMessage('violations array is required'),
+    body('scanId').isUUID().withMessage('valid scanId is required'),
+  ],
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, error: errors.array()[0].msg, timestamp: new Date().toISOString() });
+    }
+
+    const { violations, scanId } = req.body;
+
+    try {
+      const suggestions = await remediationService.generateBatchFixes({
+        violations,
+        pageUrl: '', // Could be fetched from scan repository if needed
+      });
+
+      // Optionally update the scan in the repository with new suggestions
+      const scan = scanRepository.findById(scanId);
+      if (scan) {
+        // Merge suggestions, avoiding duplicates
+        const existingRuleIds = new Set(scan.aiSuggestions.map(s => s.ruleId));
+        const newSuggestions = suggestions.filter(s => !existingRuleIds.has(s.ruleId));
+        scan.aiSuggestions.push(...newSuggestions);
+        scanRepository.update(scanId, { aiSuggestions: scan.aiSuggestions });
+      }
+
+      return res.json({
+        success: true,
+        data: suggestions,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err: any) {
+      logger.error('[AI Route] /batch-fix error:', err.message);
+      return res.status(500).json({
+        success: false,
+        error: err.message,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+);
